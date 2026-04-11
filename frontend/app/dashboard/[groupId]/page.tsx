@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { formatEther, parseEther } from "viem";
+import { useEffect } from "react";
 import { AJOCHAIN_ABI, AJOCHAIN_ADDRESS, GROUP_STATUS, FUND_STATUS } from "@/lib/contract";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
@@ -46,6 +47,15 @@ export default function DashboardPage() {
   });
 
   const { writeContractAsync, isPending } = useWriteContract();
+
+  // Auto-refresh every 15s so users see round changes without manual refresh
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchGroup();
+      refetchMembers();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [refetchGroup, refetchMembers]);
 
   const me = members?.find((m) => m.wallet.toLowerCase() === address?.toLowerCase());
 
