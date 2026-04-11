@@ -185,7 +185,7 @@ export default function DashboardPage() {
                         color:      m.hasCollateral ? "var(--teal)" : "#ff7070",
                       }}
                     >
-                      {m.hasCollateral ? "Collateral ✓" : "No collateral"}
+                      {m.hasCollateral ? "Deposit ✓" : "No deposit"}
                     </span>
                     {/* Paid */}
                     {isActive && (
@@ -217,9 +217,9 @@ export default function DashboardPage() {
             {isForming && !me.hasCollateral && (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold">Lock Collateral</p>
+                  <p className="font-semibold">Pay Security Deposit</p>
                   <p className="text-sm mt-0.5" style={{ color: "var(--gray)" }}>
-                    {formatEther(group.collateralAmount)} MON required — returned when group completes
+                    {formatEther(group.collateralAmount)} MON — fully returned when group completes
                   </p>
                 </div>
                 <button
@@ -227,14 +227,14 @@ export default function DashboardPage() {
                   disabled={isPending}
                   className="btn-teal disabled:opacity-40"
                 >
-                  {isPending ? "Locking…" : "Lock Collateral"}
+                  {isPending ? "Submitting…" : "Pay Deposit"}
                 </button>
               </div>
             )}
 
             {isForming && me.hasCollateral && (
               <p style={{ color: "var(--gray)" }}>
-                Collateral locked. Waiting for other members…
+                Security deposit paid. Waiting for other members…
               </p>
             )}
 
