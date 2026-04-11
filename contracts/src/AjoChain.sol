@@ -15,9 +15,10 @@ contract AjoChain {
 
     struct Member {
         address wallet;
-        bool    hasPaid;        // current round payment
-        bool    hasCollateral;  // collateral locked
-        uint256 creditScore;    // starts at 100, decreases on default
+        bool    hasPaid;              // current round payment
+        bool    hasCollateral;        // collateral locked
+        bool    hasReceivedPayout;    // has taken their turn as winner
+        uint256 creditScore;          // starts at 100, decreases on default
         uint8   defaultCount;
     }
 
@@ -180,11 +181,12 @@ contract AjoChain {
             address w = memberWallets[i];
             g.memberAddresses.push(w);
             g.members[w] = Member({
-                wallet:       w,
-                hasPaid:      false,
-                hasCollateral: false,
-                creditScore:  100,
-                defaultCount: 0
+                wallet:            w,
+                hasPaid:           false,
+                hasCollateral:     false,
+                hasReceivedPayout: false,
+                creditScore:       100,
+                defaultCount:      0
             });
             memberGroups[w].push(groupId);
 
@@ -337,7 +339,8 @@ contract AjoChain {
             g.roundDeadline = block.timestamp + g.roundDuration;
         }
 
-        // Pay the winner
+        // Mark winner and pay
+        g.members[winner].hasReceivedPayout = true;
         payable(winner).transfer(payout);
         emit RoundAdvanced(groupId, g.currentRound, winner, payout);
     }
@@ -421,6 +424,7 @@ contract AjoChain {
         address wallet;
         bool    hasPaid;
         bool    hasCollateral;
+        bool    hasReceivedPayout;
         uint256 creditScore;
         uint8   defaultCount;
     }
@@ -448,11 +452,12 @@ contract AjoChain {
     function getMember(uint256 groupId, address wallet) external view returns (MemberView memory) {
         Member storage m = groups[groupId].members[wallet];
         return MemberView({
-            wallet:       m.wallet,
-            hasPaid:      m.hasPaid,
-            hasCollateral: m.hasCollateral,
-            creditScore:  m.creditScore,
-            defaultCount: m.defaultCount
+            wallet:            m.wallet,
+            hasPaid:           m.hasPaid,
+            hasCollateral:     m.hasCollateral,
+            hasReceivedPayout: m.hasReceivedPayout,
+            creditScore:       m.creditScore,
+            defaultCount:      m.defaultCount
         });
     }
 
@@ -462,11 +467,12 @@ contract AjoChain {
         for (uint256 i = 0; i < g.memberAddresses.length; i++) {
             Member storage m = g.members[g.memberAddresses[i]];
             members[i] = MemberView({
-                wallet:       m.wallet,
-                hasPaid:      m.hasPaid,
-                hasCollateral: m.hasCollateral,
-                creditScore:  m.creditScore,
-                defaultCount: m.defaultCount
+                wallet:            m.wallet,
+                hasPaid:           m.hasPaid,
+                hasCollateral:     m.hasCollateral,
+                hasReceivedPayout: m.hasReceivedPayout,
+                creditScore:       m.creditScore,
+                defaultCount:      m.defaultCount
             });
         }
         return members;

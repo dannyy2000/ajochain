@@ -117,9 +117,9 @@ GROUP STATE:
 - Yield earned this group lifetime: ${Number(group.yieldEarned) / 1e18} MON
 
 MEMBERS (with their full history):
-${members.map((m, i) => `  ${i + 1}. ${m.wallet} — creditScore=${m.creditScore}, defaults=${m.defaultCount}, collateral=${m.hasCollateral}`).join('\n')}
+${members.map((m, i) => `  ${i + 1}. ${m.wallet} — creditScore=${m.creditScore}, defaults=${m.defaultCount}, collateral=${m.hasCollateral}, alreadyReceivedPayout=${m.hasReceivedPayout}`).join('\n')}
 
-Determine who should receive the payout this round. Prefer members who have not yet received a payout if you have that information. Otherwise prioritize by credit score.
+Determine who should receive the payout this round. You MUST pick a member where alreadyReceivedPayout=false. If all members have received a payout, pick the one with the highest credit score.
 
 Respond with JSON only:
 {

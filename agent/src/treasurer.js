@@ -247,11 +247,12 @@ async function tick() {
       const members = await contract.getGroupMembers(groupId);
 
       const memberViews = members.map((m) => ({
-        wallet:       m.wallet,
-        hasPaid:      m.hasPaid,
-        hasCollateral: m.hasCollateral,
-        creditScore:  Number(m.creditScore),
-        defaultCount: Number(m.defaultCount),
+        wallet:            m.wallet,
+        hasPaid:           m.hasPaid,
+        hasCollateral:     m.hasCollateral,
+        hasReceivedPayout: m.hasReceivedPayout,
+        creditScore:       Number(m.creditScore),
+        defaultCount:      Number(m.defaultCount),
       }));
 
       // Check defaults first (past deadline)
