@@ -14,15 +14,19 @@ Rules:
 - Only match people whose intents are compatible
 - A person can only be in one group at a time
 
-Your response must be a JSON array of groups to create. Each group:
+Your response must be a JSON object with a "groups" array. Each group:
 {
-  "memberWallets": ["0x...", "0x..."],
-  "contributionAmount": "in wei as string",
-  "roundDuration": seconds,
-  "reasoning": "why these specific people were matched together, what their on-chain compatibility looks like, and the proposed payout order"
+  "groups": [
+    {
+      "memberWallets": ["0x...", "0x..."],
+      "contributionAmount": "in wei as string",
+      "roundDuration": seconds,
+      "reasoning": "why these specific people were matched together"
+    }
+  ]
 }
 
-If no valid matches exist, return an empty array [].
+If no valid matches exist, return { "groups": [] }.
 Return only valid JSON, no markdown.`;
 }
 

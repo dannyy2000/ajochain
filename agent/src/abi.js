@@ -23,8 +23,8 @@ export const AJOCHAIN_ABI = [
   "function groupCount() external view returns (uint256)",
   "function getAllActiveGroups() external view returns (uint256[])",
   "function getGroup(uint256 groupId) external view returns (tuple(uint256 id, uint256 contributionAmount, uint256 collateralAmount, uint8 totalMembers, uint8 currentRound, uint8 paidCount, uint256 roundDeadline, uint256 roundDuration, uint8 status, uint8 fundStatus, uint256 stMonShares, uint256 yieldEarned, uint256 createdAt, address[] memberAddresses))",
-  "function getMember(uint256 groupId, address wallet) external view returns (tuple(address wallet, bool hasPaid, bool hasCollateral, uint256 creditScore, uint8 defaultCount))",
-  "function getGroupMembers(uint256 groupId) external view returns (tuple(address wallet, bool hasPaid, bool hasCollateral, uint256 creditScore, uint8 defaultCount)[])",
+  "function getMember(uint256 groupId, address wallet) external view returns (tuple(address wallet, bool hasPaid, bool hasCollateral, bool hasReceivedPayout, uint256 creditScore, uint8 defaultCount))",
+  "function getGroupMembers(uint256 groupId) external view returns (tuple(address wallet, bool hasPaid, bool hasCollateral, bool hasReceivedPayout, uint256 creditScore, uint8 defaultCount)[])",
   "function getIdleFunds(uint256 groupId) external view returns (uint256)",
   "function getMemberGroups(address wallet) external view returns (uint256[])",
 

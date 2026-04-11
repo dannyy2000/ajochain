@@ -40,7 +40,7 @@ async function runMatchmaking() {
   console.log(`[Matchmaking] ${unmatched.length} unmatched intents found`);
 
   const result = await askTreasurer(buildMatchmakingPrompt(unmatched));
-  const groups  = Array.isArray(result) ? result : [];
+  const groups  = Array.isArray(result.groups) ? result.groups : [];
 
   for (const g of groups) {
     try {
