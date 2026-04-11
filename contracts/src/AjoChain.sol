@@ -77,6 +77,7 @@ contract AjoChain {
     event RoundAdvanced(uint256 indexed groupId, uint8 newRound, address indexed winner, uint256 payout);
     event FundsDeployedToYield(uint256 indexed groupId, uint256 monAmount, uint256 sharesReceived);
     event FundsWithdrawnFromYield(uint256 indexed groupId, uint256 sharesRedeemed, uint256 monReturned);
+    event SecurityDepositReturned(uint256 indexed groupId, address indexed member, uint256 amount);
     event CollateralSlashed(uint256 indexed groupId, address indexed defaulter, uint256 amount, string reason);
     event MemberDefaulted(uint256 indexed groupId, uint8 round, address indexed defaulter);
     event GroupCompleted(uint256 indexed groupId);
@@ -330,19 +331,20 @@ contract AjoChain {
         }
         g.paidCount = 0;
 
-        // Check if this was the last round
-        if (roundJustCompleted == g.totalMembers) {
-            g.status = GroupStatus.Completed;
-            emit GroupCompleted(groupId);
-        } else {
-            g.currentRound++;
-            g.roundDeadline = block.timestamp + g.roundDuration;
-        }
-
         // Mark winner and pay
         g.members[winner].hasReceivedPayout = true;
         payable(winner).transfer(payout);
         emit RoundAdvanced(groupId, g.currentRound, winner, payout);
+
+        // Check if this was the last round
+        if (roundJustCompleted == g.totalMembers) {
+            g.status = GroupStatus.Completed;
+            emit GroupCompleted(groupId);
+            _returnSecurityDeposits(groupId);
+        } else {
+            g.currentRound++;
+            g.roundDeadline = block.timestamp + g.roundDuration;
+        }
     }
 
     // ─────────────────────────────────────────────────
@@ -387,16 +389,35 @@ contract AjoChain {
         }
         g.paidCount = 0;
 
+        payable(winner).transfer(payout);
+        emit RoundAdvanced(groupId, g.currentRound, winner, payout);
+
         if (g.currentRound == g.totalMembers) {
             g.status = GroupStatus.Completed;
             emit GroupCompleted(groupId);
+            _returnSecurityDeposits(groupId);
         } else {
             g.currentRound++;
             g.roundDeadline = block.timestamp + g.roundDuration;
         }
+    }
 
-        payable(winner).transfer(payout);
-        emit RoundAdvanced(groupId, g.currentRound, winner, payout);
+    // ─────────────────────────────────────────────────
+    // Internal Helpers
+    // ─────────────────────────────────────────────────
+
+    /// @notice Returns security deposits to all members who didn't default
+    function _returnSecurityDeposits(uint256 groupId) internal {
+        Group storage g = groups[groupId];
+        for (uint256 i = 0; i < g.memberAddresses.length; i++) {
+            address memberAddr = g.memberAddresses[i];
+            Member storage m = g.members[memberAddr];
+            if (m.hasCollateral) {
+                m.hasCollateral = false;
+                payable(memberAddr).transfer(g.collateralAmount);
+                emit SecurityDepositReturned(groupId, memberAddr, g.collateralAmount);
+            }
+        }
     }
 
     // ─────────────────────────────────────────────────

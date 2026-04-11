@@ -187,11 +187,11 @@ export default function RegisterPage() {
                     className="rounded-xl px-4 py-3 text-xs"
                     style={{ background: "#0b1120", color: "var(--gray)", border: "1px solid var(--border)" }}
                   >
-                    Collateral required:{" "}
+                    Security deposit:{" "}
                     <span className="text-white font-medium">
                       {(parseFloat(contribution || "0") * 2).toFixed(4)} MON
                     </span>{" "}
-                    — returned when your group completes
+                    — fully returned when your group completes
                   </div>
                 )}
 
